@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Expense & Loan Tracker</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f2f5f9;
+    color:#222;
+}
+
+header{
+    background:#17365d;
+    color:white;
+    text-align:center;
+    padding:22px 15px;
+}
+
+header h1{
+    margin:0;
+    font-size:26px;
+}
+
+header p{
+    margin:8px 0 0;
+}
+
+.container{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    padding:15px;
+}
+
+.card{
+    background:white;
+    padding:18px;
+    margin-bottom:15px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+h2{
+    margin-top:0;
+    color:#17365d;
+}
+
+label{
+    display:block;
+    margin-top:14px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    margin-top:6px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    margin-top:15px;
+    border:0;
+    border-radius:8px;
+    background:#17365d;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.summary-box{
+    background:#eef3f8;
+    padding:15px 8px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.summary-box span{
+    display:block;
+    font-size:14px;
+}
+
+.summary-box strong{
+    display:block;
+    margin-top:7px;
+    font-size:21px;
+}
+
+.table-container{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:700px;
+    border-collapse:collapse;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    background:#17365d;
+    color:white;
+}
+
+.edit-btn{
+    background:#e67e22;
+    width:auto;
+    padding:8px 12px;
+    margin:2px;
+}
+
+.delete-btn{
+    background:#c0392b;
+    width:auto;
+    padding:8px 12px;
+    margin:2px;
+}
+
+.back-btn{
+    background:#555;
+}
+
+.empty{
+    text-align:center;
+    padding:20px;
+    color:#777;
+}
+
+@media(max-width:600px){
+
+    header h1{
+        font-size:22px;
+    }
+
+    .container{
+        padding:10px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    .summary{
+        grid-template-columns:1fr;
+    }
+
+    input{
+        font-size:16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Expense & Loan Tracker</h1>
+    <p>Personal Finance Management Demo</p>
+</header>
+
+
+<div class="container">
+
+
+<!-- INPUT CARD -->
+
+<div class="card">
+
+    <h2>Add Monthly Record</h2>
+
+    <label>Month</label>
+    <input type="month" id="month">
+
+
+    <label>Salary / Income</label>
+    <input
+        type="number"
+        id="salary"
+        placeholder="Enter salary"
+    >
+
+
+    <label>House Expenses</label>
+    <input
+        type="number"
+        id="house"
+        placeholder="Enter house expenses"
+    >
+
+
+    <label>Loan Payment</label>
+    <input
+        type="number"
+        id="loan"
+        placeholder="Enter loan payment"
+    >
+
+
+    <label>Petrol / Maintenance</label>
+    <input
+        type="number"
+        id="petrol"
+        placeholder="Enter petrol and maintenance"
+    >
+
+
+    <label>Other Expenses</label>
+    <input
+        type="number"
+        id="other"
+        placeholder="Enter other expenses"
+    >
+
+
+    <button onclick="saveRecord()">
+        Save Record
+    </button>
+
+</div>
+
+
+
+<!-- SUMMARY -->
+
+<div class="card">
+
+    <h2>Financial Summary</h2>
+
+    <div class="summary">
+
+        <div class="summary-box">
+            <span>Total Income</span>
+            <strong id="totalIncome">₹0</strong>
+        </div>
+
+
+        <div class="summary-box">
+            <span>Total Expenses</span>
+            <strong id="totalExpenses">₹0</strong>
+        </div>
+
+
+        <div class="summary-box">
+            <span>Balance</span>
+            <strong id="totalBalance">₹0</strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- RECORDS -->
+
+<div class="card">
+
+    <h2>Monthly Records</h2>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Month</th>
+                    <th>Income</th>
+                    <th>Expenses</th>
+                    <th>Balance</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody id="recordsTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<!-- BACK BUTTON -->
+
+<div class="card">
+
+    <button
+        class="back-btn"
+        onclick="goBack()"
+    >
+        ← Back to Portfolio
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+let records =
+JSON.parse(
+    localStorage.getItem("expenseRecords")
+) || [];
+
+
+let editIndex = -1;
+
+
+
+/* SET CURRENT MONTH */
+
+document.getElementById("month").value =
+new Date().toISOString().slice(0,7);
+
+
+
+/* SAVE RECORD */
+
+function saveRecord(){
+
+    let month =
+    document.getElementById("month").value;
+
+    let salary =
+    Number(
+        document.getElementById("salary").value
+    ) || 0;
+
+    let house =
+    Number(
+        document.getElementById("house").value
+    ) || 0;
+
+    let loan =
+    Number(
+        document.getElementById("loan").value
+    ) || 0;
+
+    let petrol =
+    Number(
+        document.getElementById("petrol").value
+    ) || 0;
+
+    let other =
+    Number(
+        document.getElementById("other").value
+    ) || 0;
+
+
+    if(month === ""){
+
+        alert("Please select month");
+
+        return;
+    }
+
+
+    let expenses =
+    house +
+    loan +
+    petrol +
+    other;
+
+
+    let balance =
+    salary -
+    expenses;
+
+
+    let record = {
+
+        month:month,
+
+        salary:salary,
+
+        house:house,
+
+        loan:loan,
+
+        petrol:petrol,
+
+        other:other,
+
+        expenses:expenses,
+
+        balance:balance
+
+    };
+
+
+    if(editIndex === -1){
+
+        records.push(record);
+
+    }
+    else{
+
+        records[editIndex] = record;
+
+        editIndex = -1;
+
+    }
+
+
+    localStorage.setItem(
+        "expenseRecords",
+        JSON.stringify(records)
+    );
+
+
+    clearForm();
+
+    displayRecords();
+
+
+    alert("Record Saved Successfully");
+
+}
+
+
+
+/* DISPLAY RECORDS */
+
+function displayRecords(){
+
+    let table =
+    document.getElementById("recordsTable");
+
+
+    table.innerHTML = "";
+
+
+    if(records.length === 0){
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty">
+                    No records yet
+                </td>
+            </tr>
+        `;
+
+    }
+
+
+    records.forEach(function(record,index){
+
+        table.innerHTML += `
+
+            <tr>
+
+                <td>
+                    ${record.month}
+                </td>
+
+                <td>
+                    ₹${record.salary}
+                </td>
+
+                <td>
+                    ₹${record.expenses}
+                </td>
+
+                <td>
+                    ₹${record.balance}
+                </td>
+
+                <td>
+
+                    <button
+                        class="edit-btn"
+                        onclick="editRecord(${index})"
+                    >
+                        Edit
+                    </button>
+
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteRecord(${index})"
+                    >
+                        Delete
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+
+    updateSummary();
+
+}
+
+
+
+/* SUMMARY */
+
+function updateSummary(){
+
+    let income = 0;
+
+    let expenses = 0;
+
+    let balance = 0;
+
+
+    records.forEach(function(record){
+
+        income += Number(record.salary);
+
+        expenses += Number(record.expenses);
+
+        balance += Number(record.balance);
+
+    });
+
+
+    document.getElementById(
+        "totalIncome"
+    ).textContent =
+    "₹" + income;
+
+
+    document.getElementById(
+        "totalExpenses"
+    ).textContent =
+    "₹" + expenses;
+
+
+    document.getElementById(
+        "totalBalance"
+    ).textContent =
+    "₹" + balance;
+
+}
+
+
+
+/* EDIT */
+
+function editRecord(index){
+
+    let record =
+    records[index];
+
+
+    document.getElementById("month").value =
+    record.month;
+
+
+    document.getElementById("salary").value =
+    record.salary;
+
+
+    document.getElementById("house").value =
+    record.house;
+
+
+    document.getElementById("loan").value =
+    record.loan;
+
+
+    document.getElementById("petrol").value =
+    record.petrol;
+
+
+    document.getElementById("other").value =
+    record.other;
+
+
+    editIndex = index;
+
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+}
+
+
+
+/* DELETE */
+
+function deleteRecord(index){
+
+    if(
+        confirm(
+            "Delete this record?"
+        )
+    ){
+
+        records.splice(index,1);
+
+
+        localStorage.setItem(
+            "expenseRecords",
+            JSON.stringify(records)
+        );
+
+
+        displayRecords();
+
+    }
+
+}
+
+
+
+/* CLEAR FORM */
+
+function clearForm(){
+
+    document.getElementById(
+        "salary"
+    ).value = "";
+
+
+    document.getElementById(
+        "house"
+    ).value = "";
+
+
+    document.getElementById(
+        "loan"
+    ).value = "";
+
+
+    document.getElementById(
+        "petrol"
+    ).value = "";
+
+
+    document.getElementById(
+        "other"
+    ).value = "";
+
+}
+
+
+
+/* BACK TO PORTFOLIO */
+
+function goBack(){
+
+    window.location.href =
+    "index.html";
+
+}
+
+
+
+/* START APP */
+
+displayRecords();
+
+</script>
+
+</body>
+</html>

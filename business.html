@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Small Business Dashboard</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f6f8;
+  color:#222;
+}
+
+.header{
+  background:#1976d2;
+  color:white;
+  padding:20px;
+  text-align:center;
+}
+
+.header h1{
+  margin:0;
+  font-size:24px;
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:15px;
+}
+
+.card{
+  background:white;
+  padding:18px;
+  margin-bottom:15px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card h2{
+  margin-top:0;
+  font-size:20px;
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:bold;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:16px;
+}
+
+button{
+  width:100%;
+  padding:13px;
+  margin-top:15px;
+  border:0;
+  border-radius:8px;
+  background:#1976d2;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
+
+button:active{
+  transform:scale(0.98);
+}
+
+.save-btn{
+  background:#2e7d32;
+}
+
+.back-btn{
+  background:#555;
+}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.stat{
+  background:#f1f5f9;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+}
+
+.stat-title{
+  font-size:14px;
+  color:#555;
+}
+
+.stat-value{
+  font-size:20px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.profit{
+  background:#e8f5e9;
+}
+
+.records{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+
+th,td{
+  border:1px solid #ddd;
+  padding:9px;
+  text-align:center;
+}
+
+th{
+  background:#1976d2;
+  color:white;
+}
+
+.edit-btn{
+  background:#f9a825;
+  color:#000;
+  padding:7px;
+  margin:2px;
+  width:auto;
+  font-size:13px;
+}
+
+.delete-btn{
+  background:#d32f2f;
+  padding:7px;
+  margin:2px;
+  width:auto;
+  font-size:13px;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:15px;
+}
+
+@media(max-width:500px){
+  .dashboard{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .header h1{
+    font-size:21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>📊 Small Business Dashboard</h1>
+</div>
+
+<div class="container">
+
+  <!-- ENTRY FORM -->
+  <div class="card">
+
+    <h2>➕ Sales Record</h2>
+
+    <label>Date</label>
+    <input type="date" id="date">
+
+    <label>Product Name</label>
+    <input type="text" id="product" placeholder="Example: Milk">
+
+    <label>Quantity</label>
+    <input type="number" id="quantity" placeholder="Example: 10">
+
+    <label>Sales Amount ₹</label>
+    <input type="number" id="sales" placeholder="Example: 5000">
+
+    <label>Expense Amount ₹</label>
+    <input type="number" id="expense" placeholder="Example: 3000">
+
+    <button type="button" class="save-btn" onclick="saveRecord()">
+      💾 Save Sales Record
+    </button>
+
+  </div>
+
+
+  <!-- DASHBOARD -->
+  <div class="card">
+
+    <h2>📈 Dashboard</h2>
+
+    <div class="dashboard">
+
+      <div class="stat">
+        <div class="stat-title">Total Products</div>
+        <div class="stat-value" id="totalProducts">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">Total Quantity</div>
+        <div class="stat-value" id="totalQuantity">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">Total Sales</div>
+        <div class="stat-value" id="totalSales">₹0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">Total Expenses</div>
+        <div class="stat-value" id="totalExpenses">₹0</div>
+      </div>
+
+    </div>
+
+    <div class="stat profit" style="margin-top:10px;">
+      <div class="stat-title">Net Profit</div>
+      <div class="stat-value" id="netProfit">₹0</div>
+    </div>
+
+  </div>
+
+
+  <!-- RECORDS -->
+  <div class="card">
+
+    <h2>📋 Sales Records</h2>
+
+    <div class="records">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Sales</th>
+            <th>Expense</th>
+            <th>Profit</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="recordsTable">
+        </tbody>
+
+      </table>
+
+      <div id="emptyMessage" class="empty">
+        No records available
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- BACK -->
+  <div class="card">
+
+    <button type="button" class="back-btn" onclick="goBack()">
+      ⬅ Back to Portfolio
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   VARIABLES
+========================= */
+
+var records = [];
+var editIndex = -1;
+
+
+/* =========================
+   LOAD SAVED DATA
+========================= */
+
+try {
+
+  var savedData = localStorage.getItem("businessRecords");
+
+  if(savedData){
+    records = JSON.parse(savedData);
+  }
+
+} catch(error){
+
+  records = [];
+
+}
+
+
+/* =========================
+   SET TODAY DATE
+========================= */
+
+document.getElementById("date").value =
+  new Date().toISOString().split("T")[0];
+
+
+/* =========================
+   SAVE RECORD
+========================= */
+
+function saveRecord(){
+
+  var date =
+    document.getElementById("date").value;
+
+  var product =
+    document.getElementById("product").value.trim();
+
+  var quantity =
+    Number(document.getElementById("quantity").value);
+
+  var sales =
+    Number(document.getElementById("sales").value);
+
+  var expense =
+    Number(document.getElementById("expense").value);
+
+
+  /* VALIDATION */
+
+  if(date === ""){
+    alert("Please select Date");
+    return;
+  }
+
+  if(product === ""){
+    alert("Please enter Product Name");
+    return;
+  }
+
+  if(quantity <= 0){
+    alert("Please enter Quantity");
+    return;
+  }
+
+  if(sales < 0){
+    alert("Sales Amount cannot be negative");
+    return;
+  }
+
+  if(expense < 0){
+    alert("Expense Amount cannot be negative");
+    return;
+  }
+
+
+  var profit = sales - expense;
+
+
+  var record = {
+
+    date: date,
+
+    product: product,
+
+    quantity: quantity,
+
+    sales: sales,
+
+    expense: expense,
+
+    profit: profit
+
+  };
+
+
+  /* EDIT */
+
+  if(editIndex >= 0){
+
+    records[editIndex] = record;
+
+    editIndex = -1;
+
+    alert("Record Updated Successfully");
+
+  }
+
+  /* NEW RECORD */
+
+  else{
+
+    records.push(record);
+
+    alert("Record Saved Successfully");
+
+  }
+
+
+  /* SAVE TO LOCAL STORAGE */
+
+  try{
+
+    localStorage.setItem(
+      "businessRecords",
+      JSON.stringify(records)
+    );
+
+  }catch(error){
+
+    alert("Unable to save data");
+
+  }
+
+
+  clearForm();
+
+  displayRecords();
+
+  updateDashboard();
+
+}
+
+
+/* =========================
+   DISPLAY RECORDS
+========================= */
+
+function displayRecords(){
+
+  var table =
+    document.getElementById("recordsTable");
+
+  var empty =
+    document.getElementById("emptyMessage");
+
+
+  table.innerHTML = "";
+
+
+  if(records.length === 0){
+
+    empty.style.display = "block";
+
+    return;
+
+  }
+
+
+  empty.style.display = "none";
+
+
+  for(var i = 0; i < records.length; i++){
+
+    var r = records[i];
+
+    var row =
+      document.createElement("tr");
+
+
+    row.innerHTML =
+
+      "<td>" + r.date + "</td>" +
+
+      "<td>" + r.product + "</td>" +
+
+      "<td>" + r.quantity + "</td>" +
+
+      "<td>₹" + r.sales.toLocaleString("en-IN") + "</td>" +
+
+      "<td>₹" + r.expense.toLocaleString("en-IN") + "</td>" +
+
+      "<td>₹" + r.profit.toLocaleString("en-IN") + "</td>" +
+
+      "<td>" +
+
+      "<button type='button' class='edit-btn' onclick='editRecord(" + i + ")'>Edit</button>" +
+
+      "<button type='button' class='delete-btn' onclick='deleteRecord(" + i + ")'>Delete</button>" +
+
+      "</td>";
+
+
+    table.appendChild(row);
+
+  }
+
+}
+
+
+/* =========================
+   UPDATE DASHBOARD
+========================= */
+
+function updateDashboard(){
+
+  var totalProducts = records.length;
+
+  var totalQuantity = 0;
+
+  var totalSales = 0;
+
+  var totalExpenses = 0;
+
+  var netProfit = 0;
+
+
+  for(var i = 0; i < records.length; i++){
+
+    totalQuantity += Number(records[i].quantity);
+
+    totalSales += Number(records[i].sales);
+
+    totalExpenses += Number(records[i].expense);
+
+    netProfit += Number(records[i].profit);
+
+  }
+
+
+  document.getElementById("totalProducts").innerText =
+    totalProducts;
+
+
+  document.getElementById("totalQuantity").innerText =
+    totalQuantity;
+
+
+  document.getElementById("totalSales").innerText =
+    "₹" + totalSales.toLocaleString("en-IN");
+
+
+  document.getElementById("totalExpenses").innerText =
+    "₹" + totalExpenses.toLocaleString("en-IN");
+
+
+  document.getElementById("netProfit").innerText =
+    "₹" + netProfit.toLocaleString("en-IN");
+
+}
+
+
+/* =========================
+   EDIT RECORD
+========================= */
+
+function editRecord(index){
+
+  var r = records[index];
+
+
+  document.getElementById("date").value =
+    r.date;
+
+
+  document.getElementById("product").value =
+    r.product;
+
+
+  document.getElementById("quantity").value =
+    r.quantity;
+
+
+  document.getElementById("sales").value =
+    r.sales;
+
+
+  document.getElementById("expense").value =
+    r.expense;
+
+
+  editIndex = index;
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* =========================
+   DELETE RECORD
+========================= */
+
+function deleteRecord(index){
+
+  var confirmDelete =
+    confirm("Delete this record?");
+
+
+  if(!confirmDelete){
+    return;
+  }
+
+
+  records.splice(index,1);
+
+
+  try{
+
+    localStorage.setItem(
+      "businessRecords",
+      JSON.stringify(records)
+    );
+
+  }catch(error){}
+
+
+  displayRecords();
+
+  updateDashboard();
+
+}
+
+
+/* =========================
+   CLEAR FORM
+========================= */
+
+function clearForm(){
+
+  document.getElementById("date").value =
+    new Date().toISOString().split("T")[0];
+
+  document.getElementById("product").value =
+    "";
+
+  document.getElementById("quantity").value =
+    "";
+
+  document.getElementById("sales").value =
+    "";
+
+  document.getElementById("expense").value =
+    "";
+
+  editIndex = -1;
+
+}
+
+
+/* =========================
+   BACK TO PORTFOLIO
+========================= */
+
+function goBack(){
+
+  window.location.href = "index.html";
+
+}
+
+
+/* =========================
+   START APP
+========================= */
+
+displayRecords();
+
+updateDashboard();
+
+</script>
+
+</body>
+</html>
