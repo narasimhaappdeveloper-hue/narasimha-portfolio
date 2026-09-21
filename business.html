@@ -1,40 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="te">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Small Business Dashboard</title>
-
 <style>
-*{
-  box-sizing:border-box;
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+body{background:#f8fafc;color:#1e293b;padding:16px;max-width:600px;margin:auto;}
+header{background:#0f172a;color:white;padding:20px;border-radius:16px;margin-bottom:16px;}
+header h1{font-size:20px;}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.kpi{background:white;padding:14px;border-radius:12px;border:1px solid #e2e8f0;}
+.kpi h4{font-size:12px;color:#64748b;text-transform:uppercase;}
+.kpi p{font-size:20px;font-weight:700;margin-top:4px;}
+.card{background:white;padding:16px;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:16px;}
+h2{font-size:16px;margin-bottom:12px;}
+label{font-size:13px;color:#475569;display:block;margin-top:8px;}
+input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:4px;font-size:14px;}
+.btn-save{width:100%;padding:12px;background:#059669;color:white;border:none;border-radius:8px;font-weight:700;margin-top:14px;cursor:pointer;}
+.btn-save:hover{background:#047857;}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #f1f5f9;}
+th{background:#f8fafc;color:#64748b;}
+.badge-sale{color:#059669;font-weight:600;}
+.badge-exp{color:#dc2626;font-weight:600;}
+.del-icon{color:#94a3b8;cursor:pointer;border:none;background:none;font-size:16px;}
+.del-icon:hover{color:#ef4444;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 వ్యాపార డ్యాష్‌బోర్డ్ (Business Manager)</h1>
+  <p style="font-size:12px;color:#94a3b8;margin-top:4px;">రోజువారీ అమ్మకాలు & లాభనష్టాల ట్రాకర్</p>
+</header>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <h4>మొత్తం సేల్స్ (Revenue)</h4>
+    <p id="kpi-sales" style="color:#059669;">₹0</p>
+  </div>
+  <div class="kpi">
+    <h4>వ్యాపార ఖర్చులు</h4>
+    <p id="kpi-expenses" style="color:#dc2626;">₹0</p>
+  </div>
+  <div class="kpi">
+    <h4>నికర లాభం (Net Profit)</h4>
+    <p id="kpi-profit" style="color:#2563eb;">₹0</p>
+  </div>
+  <div class="kpi">
+    <h4>మొత్తం ఆర్డర్లు (Bills)</h4>
+    <p id="kpi-orders">0</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📝 కొత్త బిల్లు / ఖర్చు నమోదు</h2>
+  <label>లావాదేవీ రకం</label>
+  <select id="biz-type">
+    <option value="sale">కస్టమర్ సేల్ / బిల్లు (Sale)</option>
+    <option value="expense">స్టాక్ / షాప్ ఖర్చు (Expense)</option>
+  </select>
+
+  <label>కస్టమర్ పేరు / వస్తువు వివరాలు</label>
+  <input type="text" id="biz-desc" placeholder="ఉదా: రమేష్ ఆర్డర్, సరుకుల బిల్లు">
+
+  <label>మొత్తం విలువ (₹)</label>
+  <input type="number" id="biz-amount" placeholder="ఉదా: 1200">
+
+  <button class="btn-save" onclick="addBizRecord()">డ్యాష్‌బోర్డ్‌లో రికార్డ్ చేయండి</button>
+</div>
+
+<div class="card">
+  <h2>📈 ఇటీవలి లావాదేవీల జాబితా</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>వివరణ</th>
+        <th>రకం</th>
+        <th>మొత్తం</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="biz-table-body">
+      <tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px;">ఎలాంటి బిల్లులు నమోదు కాలేదు.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+let bizData = JSON.parse(localStorage.getItem('my_biz_dashboard_data') || '[]');
+
+function updateBizDashboard(){
+  localStorage.setItem('my_biz_dashboard_data', JSON.stringify(bizData));
+  let totalSales = 0, totalExp = 0, orderCount = 0;
+  const tbody = document.getElementById('biz-table-body');
+
+  if(bizData.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px;">ఎలాంటి బిల్లులు నమోదు కాలేదు.</td></tr>';
+  } else {
+    tbody.innerHTML = '';
+    bizData.slice().reverse().forEach((row, i) => {
+      const realIndex = bizData.length - 1 - i;
+      if(row.type === 'sale'){
+        totalSales += row.amount;
+        orderCount++;
+      } else {
+        totalExp += row.amount;
+      }
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${row.desc}</strong></td>
+          <td class="${row.type === 'sale' ? 'badge-sale' : 'badge-exp'}">${row.type === 'sale' ? 'సేల్' : 'ఖర్చు'}</td>
+          <td><strong>₹${row.amount.toLocaleString()}</strong></td>
+          <td><button class="del-icon" onclick="deleteBizRecord(${realIndex})">&times;</button></td>
+        </tr>
+      `;
+    });
+  }
+
+  document.getElementById('kpi-sales').innerText = '₹' + totalSales.toLocaleString();
+  document.getElementById('kpi-expenses').innerText = '₹' + totalExp.toLocaleString();
+  document.getElementById('kpi-profit').innerText = '₹' + (totalSales - totalExp).toLocaleString();
+  document.getElementById('kpi-orders').innerText = orderCount;
 }
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f6f8;
-  color:#222;
+function addBizRecord(){
+  const type = document.getElementById('biz-type').value;
+  const desc = document.getElementById('biz-desc').value.trim();
+  const amount = parseFloat(document.getElementById('biz-amount').value);
+
+  if(!desc || isNaN(amount) || amount <= 0){
+    alert('దయచేసి వివరణ మరియు మొత్తం సరిగ్గా నమోదు చేయండి.');
+    return;
+  }
+
+  bizData.push({ type, desc, amount });
+  document.getElementById('biz-desc').value = '';
+  document.getElementById('biz-amount').value = '';
+  updateBizDashboard();
 }
 
-.header{
-  background:#1976d2;
-  color:white;
-  padding:20px;
-  text-align:center;
+function deleteBizRecord(idx){
+  bizData.splice(idx, 1);
+  updateBizDashboard();
 }
 
-.header h1{
-  margin:0;
-  font-size:24px;
-}
-
-.container{
-  max-width:700px;
-  margin:auto;
-  padding:15px;
-}
+updateBizDashboard();
+</script>
+</body>
+</html>}
 
 .card{
   background:white;
