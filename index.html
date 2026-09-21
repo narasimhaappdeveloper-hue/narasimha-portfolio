@@ -1,37 +1,44 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Narasimha - Web App Developer</title><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Narasimha | Web App Developer</title>
+
+<style>
 *{
     box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
 }
 
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f2f4f7;
+    background:#f4f6f8;
     color:#222;
+    line-height:1.6;
 }
 
-.header{
+header{
     background:#111827;
     color:white;
     text-align:center;
-    padding:40px 20px;
+    padding:38px 20px;
 }
 
-.header h1{
-    margin:0;
+header h1{
     font-size:30px;
+    margin-bottom:8px;
 }
 
-.header p{
-    margin:8px 0;
+header p{
+    color:#d1d5db;
+    margin:4px 0;
 }
 
 .container{
-    max-width:700px;
+    max-width:900px;
     margin:auto;
     padding:20px;
 }
@@ -41,146 +48,288 @@ body{
     padding:22px;
     margin-bottom:18px;
     border-radius:15px;
-    box-shadow:0 3px 12px rgba(0,0,0,.1);
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
 }
 
 h2{
     color:#111827;
+    margin-bottom:15px;
+}
+
+.skills{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
 }
 
 .skill{
-    display:inline-block;
     background:#e5e7eb;
-    padding:8px 12px;
-    margin:5px;
+    padding:8px 14px;
     border-radius:20px;
+    font-size:14px;
 }
 
 .project{
     border:1px solid #ddd;
-    padding:15px;
-    margin-top:12px;
-    border-radius:10px;
+    padding:17px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.project:last-child{
+    margin-bottom:0;
 }
 
 .project h3{
-    margin-top:0;
+    margin-bottom:7px;
 }
 
-.demo-btn{
+.price{
+    font-weight:bold;
+    margin-top:8px;
+}
+
+button, .btn-link{
     display:inline-block;
-    background:#16a34a;
-    color:white;
+    border:none;
     padding:12px 18px;
     border-radius:8px;
+    cursor:pointer;
     font-size:15px;
-    font-weight:bold;
-    text-decoration:none;
     margin-top:10px;
-}
-
-.demo-btn:hover{
-    background:#15803d;
-}
-
-.email-btn{
-    display:block;
-    width:100%;
-    background:#2563eb;
-    color:white;
-    padding:14px;
-    border-radius:8px;
-    font-size:16px;
-    font-weight:bold;
     text-decoration:none;
     text-align:center;
-    margin-top:15px;
+    font-weight:bold;
 }
 
-.email-btn:hover{
+.demo{
+    background:#2563eb;
+    color:white;
+}
+
+.demo:hover{
     background:#1d4ed8;
 }
 
+.contact{
+    background:#16a34a;
+    color:white;
+    width:100%;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    margin:7px 0 12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+textarea{
+    min-height:110px;
+    resize:vertical;
+}
+
 .service{
-    padding:8px 0;
+    padding:7px 0;
+}
+
+.small{
+    color:#666;
+    font-size:14px;
+    margin-top:10px;
 }
 
 footer{
     background:#111827;
-    color:white;
+    color:#ddd;
     text-align:center;
-    padding:20px;
+    padding:25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>👨‍💻 Narasimha</h1>
+    <p>Web App Developer</p>
+    <p>HTML • CSS • JavaScript • Next.js • Python</p>
+    <p>Mobile-Friendly Business Applications</p>
+</header>
+
+<div class="container">
+
+    <!-- ABOUT -->
+    <div class="card">
+        <h2>👋 About Me</h2>
+        <p>
+            I create simple and mobile-friendly web applications
+            for small businesses and personal use.
+        </p>
+        <p class="small">
+            My focus is on clean design, easy data management,
+            useful reports and practical business solutions.
+        </p>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="card">
+        <h2>🛠️ My Skills</h2>
+        <div class="skills">
+            <span class="skill">HTML</span>
+            <span class="skill">CSS</span>
+            <span class="skill">JavaScript</span>
+            <span class="skill">Next.js / React</span>
+            <span class="skill">Python</span>
+            <span class="skill">Live GPS Tracking</span>
+            <span class="skill">Business Dashboards</span>
+        </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="card">
+        <h2>📱 Demo Projects</h2>
+
+        <!-- PROJECT 1: లైవ్ డెమో లింక్ (GitHub తొలగించబడింది) -->
+        <div class="project">
+            <h3>1️⃣ Attendance Live GPS & Payroll System</h3>
+            <p>
+                Live GPS location verification, webcam selfie capture, 
+                employee attendance logs, shift management, and automated payroll reports.
+            </p>
+            <p class="price">
+                Starting from ₹2,500
+            </p>
+            
+            <a 
+                href="https://attendance-live-eight.vercel.app" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="btn-link demo">
+                🚀 View Live Demo
+            </a>
+        </div>
+
+        <div class="project">
+            <h3>2️⃣ Expense & Loan Tracker</h3>
+            <p>
+                Track salary, expenses, loans,
+                monthly payments and balance.
+            </p>
+            <p class="price">
+                Starting from ₹1,500
+            </p>
+            <button
+                class="demo"
+                onclick="showDemo('Expense & Loan Tracker')">
+                View Demo
+            </button>
+        </div>
+
+        <div class="project">
+            <h3>3️⃣ Small Business Dashboard</h3>
+            <p>
+                Business data, sales, expenses,
+                reports and dashboard.
+            </p>
+            <p class="price">
+                Starting from ₹3,000
+            </p>
+            <button
+                class="demo"
+                onclick="showDemo('Small Business Dashboard')">
+                View Demo
+            </button>
+        </div>
+
+    </div>
+
+    <!-- SERVICES -->
+    <div class="card">
+        <h2>💼 My Services</h2>
+        <p class="service">✅ Simple Business Web Apps</p>
+        <p class="service">✅ Live GPS Attendance Systems</p>
+        <p class="service">✅ Expense Management</p>
+        <p class="service">✅ Loan Tracking Apps</p>
+        <p class="service">✅ Stock Management</p>
+        <p class="service">✅ Business Dashboards</p>
+        <p class="service">✅ Mobile-Friendly Websites</p>
+        <p class="service">✅ Existing App Changes</p>
+        <p class="small">
+            Final price depends on project requirements.
+        </p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="card">
+        <h2>📩 Contact Me</h2>
+        <label>Your Name</label>
+        <input
+            id="name"
+            type="text"
+            placeholder="Enter your name">
+
+        <label>Project Requirement</label>
+        <textarea
+            id="message"
+            placeholder="Tell me about your project..."></textarea>
+
+        <button
+            class="contact"
+            onclick="sendWhatsApp()">
+            💬 Contact on WhatsApp
+        </button>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Narasimha | Web App Developer
+</footer>
+
+<script>
+function showDemo(project){
+    alert(
+        "Demo Project: " +
+        project +
+        "\n\nWorking demo will be available soon."
+    );
 }
 
-</style></head><body><!-- HEADER --><div class="header"><h1>👨‍💻 Narasimha</h1><p>Web App Developer</p><p>HTML • CSS • JavaScript • Python</p><p>Mobile-Friendly Business Applications</p></div><div class="container"><!-- ABOUT --><div class="card"><h2>👋 About Me</h2><p>
-I create simple and mobile-friendly web applications
-for small businesses and personal use.
-</p><p>
-I focus on practical applications such as attendance
-management, expense tracking, sales management
-and business dashboards.
-</p></div><!-- SKILLS --><div class="card"><h2>🛠️ My Skills</h2><span class="skill">HTML</span>
+function sendWhatsApp(){
+    let name = document.getElementById("name").value.trim();
+    let message = document.getElementById("message").value.trim();
 
-<span class="skill">CSS</span>
+    if(name === ""){
+        alert("Please enter your name.");
+        return;
+    }
 
-<span class="skill">JavaScript</span>
+    if(message === ""){
+        alert("Please enter your project requirement.");
+        return;
+    }
 
-<span class="skill">Python</span>
+    let phone = "918050166319";
+    let text =
+        "Hello Narasimha,%0A%0A" +
+        "Name: " +
+        encodeURIComponent(name) +
+        "%0A%0AProject Requirement: " +
+        encodeURIComponent(message);
 
-<span class="skill">Mobile Apps</span>
+    window.open(
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        text,
+        "_blank"
+    );
+}
+</script>
 
-<span class="skill">Business Apps</span>
-
-</div><!-- PROJECTS --><div class="card"><h2>📱 My Projects</h2><!-- ATTENDANCE --><div class="project"><h3>👥 Attendance Management App</h3><p>
-Employee attendance, duty hours,
-edit and delete records.
-</p><a href="https://attendance-app-f7591.web.app/" class="project-btn" target="_blank">
-    Open Attendance App
-</a>
-
-View Demo
-
-</a></div><!-- EXPENSE --><div class="project"><h3>💰 Expense & Loan Tracker</h3><p>
-Track salary, monthly expenses,
-loans and payments.
-</p><a
-href="expense.html"
-class="demo-btn">
-
-View Demo
-
-</a></div><!-- BUSINESS --><div class="project"><h3>📊 Small Business Dashboard</h3><p>
-Sales, expenses, quantity
-and profit management.
-</p><a
-href="business.html"
-class="demo-btn">
-
-View Demo
-
-</a></div></div><!-- SERVICES --><div class="card"><h2>💼 My Services</h2><div class="service">
-✅ Business Web Apps
-</div><div class="service">
-✅ Attendance Systems
-</div><div class="service">
-✅ Expense Management
-</div><div class="service">
-✅ Business Dashboards
-</div><div class="service">
-✅ Mobile-Friendly Websites
-</div></div><!-- CONTACT --><div class="card"><h2>📩 Contact Me</h2><p>
-For web app development and business application
-projects, please contact me by email.
-</p><p>
-<strong>Business Email:</strong><br>
-narasimha.appdeveloper@gmail.com
-</p><!-- EMAIL BUTTON --><a
-href="mailto:narasimha.appdeveloper@gmail.com?subject=Web%20App%20Development%20Enquiry&body=Hello%20Narasimha%2C%0A%0AI%20am%20interested%20in%20your%20Web%20App%20Development%20services.%0A%0ABusiness%20Type%3A%0AApp%20Requirement%3A%0A%0AThank%20you."
-class="email-btn">
-
-📧 Contact by Email
-
-</a></div></div><!-- FOOTER --><footer>© 2026 Narasimha | Web App Developer
-
-</footer></body>
+</body>
 </html>
