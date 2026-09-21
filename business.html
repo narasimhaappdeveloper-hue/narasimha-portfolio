@@ -1,378 +1,276 @@
 <!DOCTYPE html>
-<html lang="te">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Small Business Dashboard</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
-body{background:#f8fafc;color:#1e293b;padding:16px;max-width:600px;margin:auto;}
-header{background:#0f172a;color:white;padding:20px;border-radius:16px;margin-bottom:16px;}
-header h1{font-size:20px;}
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
-.kpi{background:white;padding:14px;border-radius:12px;border:1px solid #e2e8f0;}
-.kpi h4{font-size:12px;color:#64748b;text-transform:uppercase;}
-.kpi p{font-size:20px;font-weight:700;margin-top:4px;}
-.card{background:white;padding:16px;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:16px;}
-h2{font-size:16px;margin-bottom:12px;}
-label{font-size:13px;color:#475569;display:block;margin-top:8px;}
-input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:4px;font-size:14px;}
-.btn-save{width:100%;padding:12px;background:#059669;color:white;border:none;border-radius:8px;font-weight:700;margin-top:14px;cursor:pointer;}
-.btn-save:hover{background:#047857;}
-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;}
-th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #f1f5f9;}
-th{background:#f8fafc;color:#64748b;}
-.badge-sale{color:#059669;font-weight:600;}
-.badge-exp{color:#dc2626;font-weight:600;}
-.del-icon{color:#94a3b8;cursor:pointer;border:none;background:none;font-size:16px;}
-.del-icon:hover{color:#ef4444;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>📊 వ్యాపార డ్యాష్‌బోర్డ్ (Business Manager)</h1>
-  <p style="font-size:12px;color:#94a3b8;margin-top:4px;">రోజువారీ అమ్మకాలు & లాభనష్టాల ట్రాకర్</p>
-</header>
-
-<div class="kpi-grid">
-  <div class="kpi">
-    <h4>మొత్తం సేల్స్ (Revenue)</h4>
-    <p id="kpi-sales" style="color:#059669;">₹0</p>
-  </div>
-  <div class="kpi">
-    <h4>వ్యాపార ఖర్చులు</h4>
-    <p id="kpi-expenses" style="color:#dc2626;">₹0</p>
-  </div>
-  <div class="kpi">
-    <h4>నికర లాభం (Net Profit)</h4>
-    <p id="kpi-profit" style="color:#2563eb;">₹0</p>
-  </div>
-  <div class="kpi">
-    <h4>మొత్తం ఆర్డర్లు (Bills)</h4>
-    <p id="kpi-orders">0</p>
-  </div>
-</div>
-
-<div class="card">
-  <h2>📝 కొత్త బిల్లు / ఖర్చు నమోదు</h2>
-  <label>లావాదేవీ రకం</label>
-  <select id="biz-type">
-    <option value="sale">కస్టమర్ సేల్ / బిల్లు (Sale)</option>
-    <option value="expense">స్టాక్ / షాప్ ఖర్చు (Expense)</option>
-  </select>
-
-  <label>కస్టమర్ పేరు / వస్తువు వివరాలు</label>
-  <input type="text" id="biz-desc" placeholder="ఉదా: రమేష్ ఆర్డర్, సరుకుల బిల్లు">
-
-  <label>మొత్తం విలువ (₹)</label>
-  <input type="number" id="biz-amount" placeholder="ఉదా: 1200">
-
-  <button class="btn-save" onclick="addBizRecord()">డ్యాష్‌బోర్డ్‌లో రికార్డ్ చేయండి</button>
-</div>
-
-<div class="card">
-  <h2>📈 ఇటీవలి లావాదేవీల జాబితా</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>వివరణ</th>
-        <th>రకం</th>
-        <th>మొత్తం</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="biz-table-body">
-      <tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px;">ఎలాంటి బిల్లులు నమోదు కాలేదు.</td></tr>
-    </tbody>
-  </table>
-</div>
-
-<script>
-let bizData = JSON.parse(localStorage.getItem('my_biz_dashboard_data') || '[]');
-
-function updateBizDashboard(){
-  localStorage.setItem('my_biz_dashboard_data', JSON.stringify(bizData));
-  let totalSales = 0, totalExp = 0, orderCount = 0;
-  const tbody = document.getElementById('biz-table-body');
-
-  if(bizData.length === 0){
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px;">ఎలాంటి బిల్లులు నమోదు కాలేదు.</td></tr>';
-  } else {
-    tbody.innerHTML = '';
-    bizData.slice().reverse().forEach((row, i) => {
-      const realIndex = bizData.length - 1 - i;
-      if(row.type === 'sale'){
-        totalSales += row.amount;
-        orderCount++;
-      } else {
-        totalExp += row.amount;
-      }
-
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>${row.desc}</strong></td>
-          <td class="${row.type === 'sale' ? 'badge-sale' : 'badge-exp'}">${row.type === 'sale' ? 'సేల్' : 'ఖర్చు'}</td>
-          <td><strong>₹${row.amount.toLocaleString()}</strong></td>
-          <td><button class="del-icon" onclick="deleteBizRecord(${realIndex})">&times;</button></td>
-        </tr>
-      `;
-    });
-  }
-
-  document.getElementById('kpi-sales').innerText = '₹' + totalSales.toLocaleString();
-  document.getElementById('kpi-expenses').innerText = '₹' + totalExp.toLocaleString();
-  document.getElementById('kpi-profit').innerText = '₹' + (totalSales - totalExp).toLocaleString();
-  document.getElementById('kpi-orders').innerText = orderCount;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
 }
 
-function addBizRecord(){
-  const type = document.getElementById('biz-type').value;
-  const desc = document.getElementById('biz-desc').value.trim();
-  const amount = parseFloat(document.getElementById('biz-amount').value);
-
-  if(!desc || isNaN(amount) || amount <= 0){
-    alert('దయచేసి వివరణ మరియు మొత్తం సరిగ్గా నమోదు చేయండి.');
-    return;
-  }
-
-  bizData.push({ type, desc, amount });
-  document.getElementById('biz-desc').value = '';
-  document.getElementById('biz-amount').value = '';
-  updateBizDashboard();
+body{
+    background:#f4f6f8;
+    color:#222;
+    line-height:1.6;
 }
 
-function deleteBizRecord(idx){
-  bizData.splice(idx, 1);
-  updateBizDashboard();
+header{
+    background:#111827;
+    color:white;
+    text-align:center;
+    padding:30px 15px;
 }
 
-updateBizDashboard();
-</script>
-</body>
-</html>}
+header h1{
+    font-size:24px;
+    margin-bottom:6px;
+}
+
+header p{
+    color:#d1d5db;
+    font-size:14px;
+}
+
+.container{
+    width:100%;
+    max-width:850px;
+    margin:auto;
+    padding:16px;
+}
 
 .card{
-  background:white;
-  padding:18px;
-  margin-bottom:15px;
-  border-radius:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    background:white;
+    padding:20px;
+    margin-bottom:16px;
+    border-radius:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.06);
 }
 
-.card h2{
-  margin-top:0;
-  font-size:20px;
+h2{
+    margin-top:0;
+    margin-bottom:12px;
+    color:#111827;
+    font-size:18px;
 }
 
 label{
-  display:block;
-  margin-top:12px;
-  font-weight:bold;
+    display:block;
+    margin-top:12px;
+    font-weight:bold;
+    font-size:14px;
+    color:#374151;
 }
 
 input{
-  width:100%;
-  padding:12px;
-  margin-top:6px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  font-size:16px;
+    width:100%;
+    padding:11px 12px;
+    margin-top:6px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:15px;
 }
 
 button{
-  width:100%;
-  padding:13px;
-  margin-top:15px;
-  border:0;
-  border-radius:8px;
-  background:#1976d2;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:0;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
 button:active{
-  transform:scale(0.98);
+    transform:scale(0.99);
 }
 
 .save-btn{
-  background:#2e7d32;
+    background:#059669;
 }
 
-.back-btn{
-  background:#555;
+.save-btn:hover{
+    background:#047857;
 }
 
 .dashboard{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
 }
 
 .stat{
-  background:#f1f5f9;
-  padding:15px;
-  border-radius:10px;
-  text-align:center;
+    background:#f3f4f6;
+    padding:16px 10px;
+    border-radius:10px;
+    text-align:center;
 }
 
 .stat-title{
-  font-size:14px;
-  color:#555;
+    font-size:13px;
+    color:#6b7280;
+    font-weight:600;
 }
 
 .stat-value{
-  font-size:20px;
-  font-weight:bold;
-  margin-top:5px;
+    font-size:20px;
+    font-weight:bold;
+    margin-top:6px;
 }
 
-.profit{
-  background:#e8f5e9;
+.profit-box{
+    grid-column:span 2;
+    background:#ecfdf5;
+    border:1px solid #a7f3d0;
 }
 
 .records{
-  overflow-x:auto;
+    overflow-x:auto;
 }
 
 table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:600px;
+    width:100%;
+    min-width:650px;
+    border-collapse:collapse;
+    margin-top:8px;
 }
 
 th,td{
-  border:1px solid #ddd;
-  padding:9px;
-  text-align:center;
+    border:1px solid #e5e7eb;
+    padding:10px 8px;
+    text-align:center;
+    font-size:14px;
 }
 
 th{
-  background:#1976d2;
-  color:white;
+    background:#1f2937;
+    color:white;
 }
 
 .edit-btn{
-  background:#f9a825;
-  color:#000;
-  padding:7px;
-  margin:2px;
-  width:auto;
-  font-size:13px;
+    background:#f59e0b;
+    color:white;
+    width:auto;
+    padding:6px 10px;
+    margin:2px;
+    font-size:12px;
 }
 
 .delete-btn{
-  background:#d32f2f;
-  padding:7px;
-  margin:2px;
-  width:auto;
-  font-size:13px;
+    background:#ef4444;
+    color:white;
+    width:auto;
+    padding:6px 10px;
+    margin:2px;
+    font-size:12px;
+}
+
+.back-btn{
+    background:#4b5563;
+    display:block;
+    text-align:center;
+}
+
+.back-btn:hover{
+    background:#374151;
 }
 
 .empty{
-  text-align:center;
-  color:#777;
-  padding:15px;
+    text-align:center;
+    padding:20px;
+    color:#9ca3af;
 }
 
-@media(max-width:500px){
-  .dashboard{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .header h1{
-    font-size:21px;
-  }
+@media(max-width:600px){
+    header h1{ font-size:20px; }
+    .container{ padding:10px; }
+    .card{ padding:15px; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>📊 Small Business Dashboard</h1>
-</div>
+<header>
+    <h1>📊 Small Business Dashboard</h1>
+    <p>Sales, Expenses & Profit Tracker Demo</p>
+</header>
 
 <div class="container">
 
   <!-- ENTRY FORM -->
   <div class="card">
+    <h2>➕ Add Sales Record</h2>
 
-    <h2>➕ Sales Record</h2>
-
-    <label>Date</label>
+    <label for="date">Date</label>
     <input type="date" id="date">
 
-    <label>Product Name</label>
-    <input type="text" id="product" placeholder="Example: Milk">
+    <label for="product">Product / Customer Name</label>
+    <input type="text" id="product" placeholder="Example: Bulk Order A">
 
-    <label>Quantity</label>
+    <label for="quantity">Quantity</label>
     <input type="number" id="quantity" placeholder="Example: 10">
 
-    <label>Sales Amount ₹</label>
+    <label for="sales">Sales Amount (₹)</label>
     <input type="number" id="sales" placeholder="Example: 5000">
 
-    <label>Expense Amount ₹</label>
+    <label for="expense">Expense Amount (₹)</label>
     <input type="number" id="expense" placeholder="Example: 3000">
 
     <button type="button" class="save-btn" onclick="saveRecord()">
       💾 Save Sales Record
     </button>
-
   </div>
 
-
-  <!-- DASHBOARD -->
+  <!-- DASHBOARD STATS -->
   <div class="card">
-
-    <h2>📈 Dashboard</h2>
+    <h2>📈 Performance Summary</h2>
 
     <div class="dashboard">
-
       <div class="stat">
-        <div class="stat-title">Total Products</div>
+        <div class="stat-title">TOTAL ORDERS</div>
         <div class="stat-value" id="totalProducts">0</div>
       </div>
 
       <div class="stat">
-        <div class="stat-title">Total Quantity</div>
+        <div class="stat-title">TOTAL QUANTITY</div>
         <div class="stat-value" id="totalQuantity">0</div>
       </div>
 
       <div class="stat">
-        <div class="stat-title">Total Sales</div>
-        <div class="stat-value" id="totalSales">₹0</div>
+        <div class="stat-title">TOTAL SALES</div>
+        <div class="stat-value" id="totalSales" style="color:#059669;">₹0</div>
       </div>
 
       <div class="stat">
-        <div class="stat-title">Total Expenses</div>
-        <div class="stat-value" id="totalExpenses">₹0</div>
+        <div class="stat-title">TOTAL EXPENSES</div>
+        <div class="stat-value" id="totalExpenses" style="color:#dc2626;">₹0</div>
       </div>
 
+      <div class="stat profit-box">
+        <div class="stat-title">NET PROFIT</div>
+        <div class="stat-value" id="netProfit" style="color:#2563eb;">₹0</div>
+      </div>
     </div>
-
-    <div class="stat profit" style="margin-top:10px;">
-      <div class="stat-title">Net Profit</div>
-      <div class="stat-value" id="netProfit">₹0</div>
-    </div>
-
   </div>
 
-
-  <!-- RECORDS -->
+  <!-- RECORDS TABLE -->
   <div class="card">
-
-    <h2>📋 Sales Records</h2>
+    <h2>📋 Sales & Expenses Log</h2>
 
     <div class="records">
-
       <table>
-
         <thead>
           <tr>
             <th>Date</th>
-            <th>Product</th>
+            <th>Product / Note</th>
             <th>Qty</th>
             <th>Sales</th>
             <th>Expense</th>
@@ -380,426 +278,187 @@ th{
             <th>Action</th>
           </tr>
         </thead>
-
-        <tbody id="recordsTable">
-        </tbody>
-
+        <tbody id="recordsTable"></tbody>
       </table>
 
-      <div id="emptyMessage" class="empty">
-        No records available
-      </div>
-
+      <div id="emptyMessage" class="empty">No records available yet.</div>
     </div>
-
   </div>
 
-
-  <!-- BACK -->
+  <!-- BACK TO PORTFOLIO -->
   <div class="card">
-
     <button type="button" class="back-btn" onclick="goBack()">
       ⬅ Back to Portfolio
     </button>
-
   </div>
 
 </div>
 
-
 <script>
-
-/* =========================
-   VARIABLES
-========================= */
-
 var records = [];
 var editIndex = -1;
 
-
-/* =========================
-   LOAD SAVED DATA
-========================= */
-
 try {
-
   var savedData = localStorage.getItem("businessRecords");
-
   if(savedData){
     records = JSON.parse(savedData);
   }
-
 } catch(error){
-
   records = [];
-
 }
 
-
-/* =========================
-   SET TODAY DATE
-========================= */
-
-document.getElementById("date").value =
-  new Date().toISOString().split("T")[0];
-
-
-/* =========================
-   SAVE RECORD
-========================= */
+document.getElementById("date").value = new Date().toISOString().split("T")[0];
 
 function saveRecord(){
-
-  var date =
-    document.getElementById("date").value;
-
-  var product =
-    document.getElementById("product").value.trim();
-
-  var quantity =
-    Number(document.getElementById("quantity").value);
-
-  var sales =
-    Number(document.getElementById("sales").value);
-
-  var expense =
-    Number(document.getElementById("expense").value);
-
-
-  /* VALIDATION */
+  var date = document.getElementById("date").value;
+  var product = document.getElementById("product").value.trim();
+  var quantity = Number(document.getElementById("quantity").value);
+  var sales = Number(document.getElementById("sales").value);
+  var expense = Number(document.getElementById("expense").value);
 
   if(date === ""){
     alert("Please select Date");
     return;
   }
-
   if(product === ""){
     alert("Please enter Product Name");
     return;
   }
-
-  if(quantity <= 0){
-    alert("Please enter Quantity");
+  if(quantity <= 0 || isNaN(quantity)){
+    alert("Please enter a valid Quantity");
     return;
   }
-
-  if(sales < 0){
+  if(sales < 0 || isNaN(sales)){
     alert("Sales Amount cannot be negative");
     return;
   }
-
-  if(expense < 0){
+  if(expense < 0 || isNaN(expense)){
     alert("Expense Amount cannot be negative");
     return;
   }
 
-
   var profit = sales - expense;
-
-
   var record = {
-
     date: date,
-
     product: product,
-
     quantity: quantity,
-
     sales: sales,
-
     expense: expense,
-
     profit: profit
-
   };
 
-
-  /* EDIT */
-
   if(editIndex >= 0){
-
     records[editIndex] = record;
-
     editIndex = -1;
-
     alert("Record Updated Successfully");
-
-  }
-
-  /* NEW RECORD */
-
-  else{
-
+  } else {
     records.push(record);
-
     alert("Record Saved Successfully");
-
   }
 
-
-  /* SAVE TO LOCAL STORAGE */
-
-  try{
-
-    localStorage.setItem(
-      "businessRecords",
-      JSON.stringify(records)
-    );
-
-  }catch(error){
-
+  try {
+    localStorage.setItem("businessRecords", JSON.stringify(records));
+  } catch(error){
     alert("Unable to save data");
-
   }
-
 
   clearForm();
-
   displayRecords();
-
   updateDashboard();
-
 }
 
-
-/* =========================
-   DISPLAY RECORDS
-========================= */
-
 function displayRecords(){
-
-  var table =
-    document.getElementById("recordsTable");
-
-  var empty =
-    document.getElementById("emptyMessage");
-
+  var table = document.getElementById("recordsTable");
+  var empty = document.getElementById("emptyMessage");
 
   table.innerHTML = "";
 
-
   if(records.length === 0){
-
     empty.style.display = "block";
-
     return;
-
   }
-
 
   empty.style.display = "none";
 
-
   for(var i = 0; i < records.length; i++){
-
     var r = records[i];
-
-    var row =
-      document.createElement("tr");
-
+    var row = document.createElement("tr");
 
     row.innerHTML =
-
       "<td>" + r.date + "</td>" +
-
-      "<td>" + r.product + "</td>" +
-
+      "<td><strong>" + r.product + "</strong></td>" +
       "<td>" + r.quantity + "</td>" +
-
-      "<td>₹" + r.sales.toLocaleString("en-IN") + "</td>" +
-
-      "<td>₹" + r.expense.toLocaleString("en-IN") + "</td>" +
-
-      "<td>₹" + r.profit.toLocaleString("en-IN") + "</td>" +
-
+      "<td style='color:#059669; font-weight:600;'>₹" + r.sales.toLocaleString("en-IN") + "</td>" +
+      "<td style='color:#dc2626; font-weight:600;'>₹" + r.expense.toLocaleString("en-IN") + "</td>" +
+      "<td style='color:#2563eb; font-weight:700;'>₹" + r.profit.toLocaleString("en-IN") + "</td>" +
       "<td>" +
-
       "<button type='button' class='edit-btn' onclick='editRecord(" + i + ")'>Edit</button>" +
-
       "<button type='button' class='delete-btn' onclick='deleteRecord(" + i + ")'>Delete</button>" +
-
       "</td>";
 
-
     table.appendChild(row);
-
   }
-
 }
-
-
-/* =========================
-   UPDATE DASHBOARD
-========================= */
 
 function updateDashboard(){
-
   var totalProducts = records.length;
-
   var totalQuantity = 0;
-
   var totalSales = 0;
-
   var totalExpenses = 0;
-
   var netProfit = 0;
 
-
   for(var i = 0; i < records.length; i++){
-
     totalQuantity += Number(records[i].quantity);
-
     totalSales += Number(records[i].sales);
-
     totalExpenses += Number(records[i].expense);
-
     netProfit += Number(records[i].profit);
-
   }
 
-
-  document.getElementById("totalProducts").innerText =
-    totalProducts;
-
-
-  document.getElementById("totalQuantity").innerText =
-    totalQuantity;
-
-
-  document.getElementById("totalSales").innerText =
-    "₹" + totalSales.toLocaleString("en-IN");
-
-
-  document.getElementById("totalExpenses").innerText =
-    "₹" + totalExpenses.toLocaleString("en-IN");
-
-
-  document.getElementById("netProfit").innerText =
-    "₹" + netProfit.toLocaleString("en-IN");
-
+  document.getElementById("totalProducts").innerText = totalProducts;
+  document.getElementById("totalQuantity").innerText = totalQuantity;
+  document.getElementById("totalSales").innerText = "₹" + totalSales.toLocaleString("en-IN");
+  document.getElementById("totalExpenses").innerText = "₹" + totalExpenses.toLocaleString("en-IN");
+  document.getElementById("netProfit").innerText = "₹" + netProfit.toLocaleString("en-IN");
 }
-
-
-/* =========================
-   EDIT RECORD
-========================= */
 
 function editRecord(index){
-
   var r = records[index];
-
-
-  document.getElementById("date").value =
-    r.date;
-
-
-  document.getElementById("product").value =
-    r.product;
-
-
-  document.getElementById("quantity").value =
-    r.quantity;
-
-
-  document.getElementById("sales").value =
-    r.sales;
-
-
-  document.getElementById("expense").value =
-    r.expense;
-
-
+  document.getElementById("date").value = r.date;
+  document.getElementById("product").value = r.product;
+  document.getElementById("quantity").value = r.quantity;
+  document.getElementById("sales").value = r.sales;
+  document.getElementById("expense").value = r.expense;
   editIndex = index;
 
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
+  window.scrollTo({ top:0, behavior:"smooth" });
 }
-
-
-/* =========================
-   DELETE RECORD
-========================= */
 
 function deleteRecord(index){
-
-  var confirmDelete =
-    confirm("Delete this record?");
-
-
-  if(!confirmDelete){
-    return;
+  if(confirm("Delete this record?")){
+    records.splice(index, 1);
+    try {
+      localStorage.setItem("businessRecords", JSON.stringify(records));
+    } catch(error){}
+    displayRecords();
+    updateDashboard();
   }
-
-
-  records.splice(index,1);
-
-
-  try{
-
-    localStorage.setItem(
-      "businessRecords",
-      JSON.stringify(records)
-    );
-
-  }catch(error){}
-
-
-  displayRecords();
-
-  updateDashboard();
-
 }
-
-
-/* =========================
-   CLEAR FORM
-========================= */
 
 function clearForm(){
-
-  document.getElementById("date").value =
-    new Date().toISOString().split("T")[0];
-
-  document.getElementById("product").value =
-    "";
-
-  document.getElementById("quantity").value =
-    "";
-
-  document.getElementById("sales").value =
-    "";
-
-  document.getElementById("expense").value =
-    "";
-
+  document.getElementById("date").value = new Date().toISOString().split("T")[0];
+  document.getElementById("product").value = "";
+  document.getElementById("quantity").value = "";
+  document.getElementById("sales").value = "";
+  document.getElementById("expense").value = "";
   editIndex = -1;
-
 }
-
-
-/* =========================
-   BACK TO PORTFOLIO
-========================= */
 
 function goBack(){
-
   window.location.href = "index.html";
-
 }
 
-
-/* =========================
-   START APP
-========================= */
-
 displayRecords();
-
 updateDashboard();
-
 </script>
 
 </body>
