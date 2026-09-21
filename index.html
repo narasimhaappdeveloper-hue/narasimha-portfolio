@@ -209,6 +209,7 @@ footer{
     <div class="card">
         <h2>📱 Demo Projects</h2>
 
+        <!-- PROJECT 1: Live on Vercel -->
         <div class="project">
             <h3>1️⃣ Attendance Live GPS & Payroll System</h3>
             <p>
@@ -228,6 +229,7 @@ footer{
             </a>
         </div>
 
+        <!-- PROJECT 2: Expense Tracker (GitHub Pages) -->
         <div class="project">
             <h3>2️⃣ Expense & Loan Tracker</h3>
             <p>
@@ -237,13 +239,17 @@ footer{
             <p class="price">
                 Starting from ₹1,500
             </p>
-            <button
-                class="demo"
-                onclick="showDemo('Expense & Loan Tracker')">
-                View Demo
-            </button>
+            
+            <a 
+                href="https://narasimhaappdeveloper-hue.github.io/narasimha-portfolio/expenses.html" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="btn-link demo">
+                🚀 View Live Demo
+            </a>
         </div>
 
+        <!-- PROJECT 3: Business Dashboard (GitHub Pages) -->
         <div class="project">
             <h3>3️⃣ Small Business Dashboard</h3>
             <p>
@@ -253,11 +259,14 @@ footer{
             <p class="price">
                 Starting from ₹3,000
             </p>
-            <button
-                class="demo"
-                onclick="showDemo('Small Business Dashboard')">
-                View Demo
-            </button>
+            
+            <a 
+                href="https://narasimhaappdeveloper-hue.github.io/narasimha-portfolio/business.html" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="btn-link demo">
+                🚀 View Live Demo
+            </a>
         </div>
 
     </div>
@@ -278,7 +287,7 @@ footer{
         </p>
     </div>
 
-    <!-- CONTACT FORM (FORMSPREE INTEGRATED) -->
+    <!-- CONTACT FORM (FORMSPREE TO GMAIL) -->
     <div class="card">
         <h2>📩 Contact Me via Email</h2>
 
@@ -324,15 +333,7 @@ footer{
 </footer>
 
 <script>
-function showDemo(project){
-    alert(
-        "Demo Project: " +
-        project +
-        "\n\nWorking demo will be available soon."
-    );
-}
-
-// Formspree సబ్మిషన్ హ్యాండ్లర్
+// Formspree AJAX Submission Handler
 const form = document.getElementById("contact-form");
 const statusMsg = document.getElementById("status-msg");
 const submitBtn = document.getElementById("submit-btn");
